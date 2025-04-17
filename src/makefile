@@ -22,43 +22,44 @@ CATALYST   = ${CATALYST_DIR}
 # Compiler and flags
 CC         = mpicxx
 CFLAGS     = -O3 -g
+#CFLAGS     = -std=gnu99 -g -fpic -pedantic -W -Wextra -Wall -Wno-comment -O0 -g -fbounds-check -ffpe-trap=invalid,zero,overflow
 CPPFLAGS   = $(INC_FLAGS) -DPARAVIEW_IMPL_DIR=\"\"
 LDFLAGS    = -L$(PETSC_DIR)/$(PETSC_ARCH)/lib 
-LIBS       = -lpthread -lrt -ldl -lstdc++ -lpetsc -lf2cblas -lf2clapack -lHYPRE 
+LIBS       = -lpthread -ldl -lstdc++ -lpetsc -lf2cblas -lf2clapack -lHYPRE 
+
+# Include paths
+INC_FLAGS  = -I$(PETSC_DIR)/include -I$(PETSC_DIR)/$(PETSC_ARCH)/include 
 
 # HDF5 support
 ifeq ($(USE_HDF5), 1)
-CPPFLAGS  += -DUSE_HDF5=1
-LDFLAGS   += -L$(HDF5)/lib
-INC_FLAGS += -I$(HDF5)/include
-LIBS      += -lhdf5 
+	CPPFLAGS  += -DUSE_HDF5=1
+	LDFLAGS   += -L$(HDF5)/lib
+	INC_FLAGS += -I$(HDF5)/include
+	LIBS      += -lhdf5 
 else
-CPPFLAGS  += -DUSE_HDF5=0
+	CPPFLAGS  += -DUSE_HDF5=0
 endif
 
 # Catalyst support
 ifeq ($(USE_CATALYST), 1)
-CPPFLAGS  += -DUSE_CATALYST=1
-LDFLAGS   += -L$(CATALYST)/lib
-INC_FLAGS += -I$(CATALYST)/include/catalyst-2.0
-LIBS      += -lcatalyst
+	CPPFLAGS  += -DUSE_CATALYST=1
+	LDFLAGS   += -L$(CATALYST)/lib
+	INC_FLAGS += -I$(CATALYST)/include/catalyst-2.0
+	LIBS      += -lcatalyst
 else
-CPPFLAGS  += -DUSE_CATALYST=0
+	CPPFLAGS  += -DUSE_CATALYST=0
 endif
 
 # Python support
 ifeq ($(USE_PYTHON), 1)
-CPPFLAGS  += -DUSE_PYTHON=1
-CFLAGS    += $(shell python3 -m pybind11 --includes)
-LDFLAGS   += $(shell python3-config --ldflags)
-INC_FLAGS += $(shell python3-config --includes)
-LIBS      += -lpython3.10
+	CPPFLAGS  += -DUSE_PYTHON=1
+	CFLAGS    += $(shell python3 -m pybind11 --includes)
+	LDFLAGS   += $(shell python3-config --ldflags)
+	INC_FLAGS += $(shell python3-config --includes)
+	LIBS      += -lpython3.10
 else
-CPPFLAGS  += -DUSE_PYTHON=0
+	CPPFLAGS  += -DUSE_PYTHON=0
 endif
-
-# Include paths
-INC_FLAGS  = -I$(PETSC_DIR)/include -I$(PETSC_DIR)/$(PETSC_ARCH)/include 
 
 # Directories
 BUILD_DIR  = build

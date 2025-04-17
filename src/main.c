@@ -32,11 +32,15 @@ int main(int argc, char **argv)
 
     // simulation time
     PetscReal solutionTimeStart, solutionTimeEnd;
-    PetscReal iterationTimeStart, iterationTimeEnd;
+    PetscReal iterationTimeStart, iterationTimeEnd, iterationTime;
+    PetscReal temporalLoopTime, RCT_temporal_loop;
+    PetscMPIInt nProcs;
     PetscTime(&solutionTimeStart);
 
     // initialize simulation
     simulationInitialize(&domain, &clock, &info, &flags);
+    MPI_Comm_size(domain[0].mesh->MESH_COMM, &nProcs);
+    temporalLoopTime = 0.0;
 
     if(flags.isPvCatalystActive)
     {
@@ -266,8 +270,14 @@ int main(int argc, char **argv)
         clock.it ++;
 
         PetscTime(&iterationTimeEnd);
-
-        PetscPrintf(PETSC_COMM_WORLD, "Total iteration time = %lf s\n", iterationTimeEnd - iterationTimeStart);
+        iterationTime = iterationTimeEnd - iterationTimeStart;
+        temporalLoopTime = temporalLoopTime + iterationTime;
+        RCT_temporal_loop = temporalLoopTime*float(nProcs)/float(domain[0].mesh->IM*domain[0].mesh->JM*domain[0].mesh->KM*clock.it)*1.e6;
+        for(PetscInt d=0; d<info.nDomains; d++)
+        {
+             PetscPrintf(PETSC_COMM_WORLD, "%lf\n",float(nProcs)/float(domain[d].mesh->IM*domain[d].mesh->JM*domain[d].mesh->KM*clock.it));
+        }
+        PetscPrintf(PETSC_COMM_WORLD, "Total iteration time = %lf s   RCT = %.2f us/iter/elem\n", iterationTime, RCT_temporal_loop);
 
         MPI_Barrier(PETSC_COMM_WORLD);
 

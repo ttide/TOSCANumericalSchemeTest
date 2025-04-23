@@ -52,6 +52,8 @@ struct simInfo_
 {
     PetscInt nDomains;
     PetscInt periodic;
+    PetscMPIInt nProcs;
+    PetscInt nElemTotal;
 };
 
 struct constants_

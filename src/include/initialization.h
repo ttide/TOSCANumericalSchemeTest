@@ -43,3 +43,6 @@ PetscErrorCode SetInitialField(domain_ *domain);
 
 //!< \brief set the initial internal contravariant and cartesian velocity field
 PetscErrorCode SetInitialField(ueqn_ *ueqn);
+
+//!< \brief Initialize solver performance analysis informations
+PetscErrorCode InitializePerformancesAnalysis(domain_ *domain, simInfo_ *info);

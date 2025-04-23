@@ -47,12 +47,14 @@ PetscErrorCode PrintOkWindLogo()
 
 //***************************************************************************************************************//
 
-PetscErrorCode PrintNumberOfProcs()
+PetscErrorCode PrintNumberOfProcs(simInfo_ *info)
 {
-    PetscMPIInt nProcs;
 
-    MPI_Comm_size(PETSC_COMM_WORLD, &nProcs);
-    PetscPrintf(PETSC_COMM_WORLD,"Simulation running with %ld processors\n", nProcs);
+    // obtain MPI communicator size
+    MPI_Comm_size(PETSC_COMM_WORLD, &(info->nProcs));
+
+    // print info
+    PetscPrintf(PETSC_COMM_WORLD,"Simulation running with %ld processors\n", info->nProcs);
     PetscPrintf(PETSC_COMM_WORLD,"-----------------------------------\n\n");
 
     return(0);
@@ -66,7 +68,7 @@ PetscErrorCode simulationInitialize(domain_ **domainAddr, clock_ *clock, simInfo
     PrintOkWindLogo();
 
     // print number of processors being used for this simulation
-    PrintNumberOfProcs();
+    PrintNumberOfProcs(info);
 
     // reads parent/child tree and allocates os memory
     SetDomainsAndAllocate(domainAddr, flags, info);
@@ -74,7 +76,7 @@ PetscErrorCode simulationInitialize(domain_ **domainAddr, clock_ *clock, simInfo
     domain_ *domain = *domainAddr;
 
     // set simulation start time
-    SetStartTime(clock, domain,info);
+    SetStartTime(clock, domain, info);
 
     for(PetscInt d=0; d<info->nDomains; d++)
     {
@@ -153,6 +155,9 @@ PetscErrorCode simulationInitialize(domain_ **domainAddr, clock_ *clock, simInfo
 
     // initialize overset
     InitializeOverset(domain);
+
+    // initialize performance analysis
+    InitializePerformancesAnalysis(domain, info);
 
     return(0);
 
@@ -602,6 +607,20 @@ PetscErrorCode SetAccessPointers(domain_ *domain)
         domain->ibm->access = &(domain->access);
     }
 
+    return(0);
+}
+
+//***************************************************************************************************************//
+
+PetscErrorCode InitializePerformancesAnalysis(domain_ *domain, simInfo_ *info)
+{
+    // init
+    info->nElemTotal = 0;
+
+    for(PetscInt d=0; d<info->nDomains; d++)
+    {
+        info->nElemTotal = info->nElemTotal + domain[d].mesh->IM*domain[d].mesh->JM*domain[d].mesh->KM - 3;
+    }
     return(0);
 }
 

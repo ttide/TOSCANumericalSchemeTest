@@ -49,11 +49,6 @@ PetscErrorCode PrintOkWindLogo()
 
 PetscErrorCode PrintNumberOfProcs(simInfo_ *info)
 {
-
-    // obtain MPI communicator size
-    MPI_Comm_size(PETSC_COMM_WORLD, &(info->nProcs));
-
-    // print info
     PetscPrintf(PETSC_COMM_WORLD,"Simulation running with %ld processors\n", info->nProcs);
     PetscPrintf(PETSC_COMM_WORLD,"-----------------------------------\n\n");
 
@@ -290,7 +285,6 @@ PetscErrorCode SetSimulationFlags(flags_ *flags)
     );
 
     return(0);
-
 }
 
 //***************************************************************************************************************//
@@ -298,6 +292,10 @@ PetscErrorCode SetSimulationFlags(flags_ *flags)
 PetscErrorCode SetSimulationInfo(simInfo_ *info)
 {
     info->nDomains = 1;
+
+    // obtain MPI communicator info
+    MPI_Comm_size(PETSC_COMM_WORLD, &(info->nProcs));
+    MPI_Comm_rank(PETSC_COMM_WORLD, &(info->rank));
 
     return(0);
 }

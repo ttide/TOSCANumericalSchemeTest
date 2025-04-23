@@ -50,10 +50,14 @@ typedef std::complex<PetscReal>            complex;
 
 struct simInfo_
 {
-    PetscInt nDomains;
+    // domains info
+    PetscInt nDomains;                          //!< Number of domains
+    PetscInt nElemTotal;                        //!< Total number of elements over all domains
     PetscInt periodic;
-    PetscMPIInt nProcs;
-    PetscInt nElemTotal;
+
+    // MPI communicator info
+    PetscMPIInt nProcs;                         //!< MPI communicator size
+    PetscMPIInt rank;                           //!< MPI communicator rank
 };
 
 struct constants_

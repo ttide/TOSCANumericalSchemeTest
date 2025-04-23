@@ -38,11 +38,6 @@ int main(int argc, char **argv)
   // initialize post-processing clock
   PetscReal ppTimeStart,ppTimeEnd; PetscTime(&ppTimeStart);
 
-  PetscMPIInt rank;   MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
-  PetscMPIInt nProcs; MPI_Comm_size(PETSC_COMM_WORLD, &nProcs);
-
-
-
   // initialize the flags
   pp.postProcessFields    = 0;
   pp.writeRaster          = 0;
@@ -58,7 +53,7 @@ int main(int argc, char **argv)
   PetscOptionsGetInt(PETSC_NULL, PETSC_NULL, "-postProcessPrecursor", (PetscInt*)&(pp.postProcessPrecursor), PETSC_NULL);
 
   // create XMF folder
-  if (!rank) createDir(PETSC_COMM_WORLD, "./XMF");
+  if (!info.rank) createDir(PETSC_COMM_WORLD, "./XMF");
 
   // initialize post processing
   if(pp.postProcessFields || pp.writeRaster || pp.samplingSections)
@@ -66,7 +61,7 @@ int main(int argc, char **argv)
       postProcessInitialize(&domain, &clock, &info, &flags);
 
       // turn-off field post processing if parallel
-      if(nProcs > 1 && pp.postProcessFields == 1)
+      if(info.nProcs > 1 && pp.postProcessFields == 1)
       {
           char warning[256];
           sprintf(warning, "-postProcessFields is not available in parallel: setting to 0");

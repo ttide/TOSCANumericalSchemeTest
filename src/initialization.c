@@ -617,7 +617,7 @@ PetscErrorCode InitializePerformancesAnalysis(domain_ *domain, simInfo_ *info)
 
     for(PetscInt d=0; d<info->nDomains; d++)
     {
-        info->nElemTotal = info->nElemTotal + domain[d].mesh->IM*domain[d].mesh->JM*domain[d].mesh->KM - 3;
+        info->nElemTotal = info->nElemTotal + (domain[d].mesh->IM-1)*(domain[d].mesh->JM-1)*(domain[d].mesh->KM-1);
     }
     return(0);
 }

@@ -1636,10 +1636,10 @@ PetscErrorCode findClosestDonorC2P(mesh_ *meshDonor, mesh_ *meshAcceptor, PetscI
             query.iy = floor(aCell[b].coory / binSize);
             query.iz = floor(aCell[b].coorz / binSize);
     
-            // Search neighboring bins (5x5x5 for robustness)
-            for (int dx = -2; dx <= 2; dx++)
-            for (int dy = -2; dy <= 2; dy++)
-            for (int dz = -2; dz <= 2; dz++) 
+            // Search neighboring bins
+            for (int dx = -1; dx <= 1; dx++)
+            for (int dy = -1; dy <= 1; dy++)
+            for (int dz = -1; dz <= 1; dz++) 
             {
                 BinIndex neighbor = {query.ix + dx, query.iy + dy, query.iz + dz};
                 if (bins.find(neighbor) != bins.end()) 
@@ -1817,7 +1817,7 @@ PetscErrorCode findClosestDonorP2C(mesh_ *meshDonor, mesh_ *meshAcceptor)
         query.iy = floor(aCell[b].coory / binSize);
         query.iz = floor(aCell[b].coorz / binSize);
 
-        // Search neighboring bins (5x5x5 for robustness)
+        // Search neighboring bins 
         for (int dx = -1; dx <= 1; dx++)
         for (int dy = -1; dy <= 1; dy++)
         for (int dz = -1; dz <= 1; dz++) 

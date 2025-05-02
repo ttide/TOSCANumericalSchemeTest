@@ -136,7 +136,7 @@ PetscErrorCode InitializeOverset(domain_ *domain)
 }
 
 //***************************************************************************************************************//
-
+//! \brief Update overset interpolation for all domains.
 PetscErrorCode UpdateOversetInterpolation(domain_ *domain)
 {
     PetscInt nDomains = domain[0].info.nDomains;
